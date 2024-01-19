@@ -1,16 +1,9 @@
-import numpy
-from scipy.integrate import odeint
-import time
 import matplotlib.pyplot as plt
-from matplotlib import animation
 import numpy as np
 import pandas as pd
 import math
 import time
-import seaborn as sns
-from scipy.signal import square
-from scipy.integrate import quad
-from math import* #import all function from math
+from math import*
 import scipy.optimize as opt
 import easygui
 
