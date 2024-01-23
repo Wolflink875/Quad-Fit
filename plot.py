@@ -1,3 +1,4 @@
+import math
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,6 +15,8 @@ labelsOn = False
 phase1 = False
 phase2 = True
 phase3 = True
+
+Amp = 0.2786*math.sqrt(2)
 
 
 
@@ -119,22 +122,21 @@ if (phase1 == True):
     polyline = np.linspace(findI, findF, 100)
     fit = np.poly1d(np.polyfit (new[:,0], new[:,1], 2))
     a = fit.c
-
+    print(fit)
     def f(x):
         return (a[0] * (x ** 2) + a[1] * (x) + a[2])
 
     result = opt.minimize(f, guess)
-    print(result.x)
 
     polyline2 = np.linspace(findI2, findF2, 100)
     fit2 = np.poly1d(np.polyfit (new2[:,0], new2[:,1], 2))
     b = fit2.c
+    print(fit2)
     def g(x):
         return (b[0]*(x ** 2) + b[1]*(x) + b[2])
 
     result2 = opt.minimize(g,x0=guess2)
 
-    print(result2.x)
 
 
 fig,ax = plt.subplots()
@@ -192,7 +194,6 @@ if (phase2 == True) and (phase1 == True):
         findF4 = 0.00700
 
     datafit = np.empty((int(size2), 2))
-    print(diff)
 
     n = 0
     for _ in range(int(size2)):
@@ -209,12 +210,12 @@ if (phase2 == True) and (phase1 == True):
             dataset['V'][n] = -dataset['V'][n]
         n = n + 1
 
-    sel = np.empty((int(size2), 2))
+    sel = np.empty((int(size), 2))
     sel2 = np.empty((int(size2), 2))
 
     n=0
     minVal = 100
-    for _ in range(int(size2)):
+    for _ in range(int(size)):
         if (datafit[n][0] > findI3) and (datafit[n][0] < findF3):
             sel[n][0] = datafit[n][0]
             sel[n][1] = datafit[n][1] + 0.8
@@ -272,13 +273,39 @@ if (phase2 == True) and (phase1 == True):
     plt.scatter(sel[:, 0], sel[:, 1])
     plt.scatter(sel2[:, 0], sel2[:, 1])
 
-    print(minVal2)
-    print(minVal)
+    val = Amp* np.cos(2*np.pi*60*(minVal-(result.x)))
+    val2 = Amp * np.cos(2*np.pi * 60 * abs(minVal2 - (result.x)))
+    val3 = Amp * np.cos(2*np.pi * 60 * abs(minVal2 - mid))
+
+    print("Intersect Method: ")
+    print(float(yVal))
+    print(float(yVal2))
+    print("Quad Method: ")
+    print(float(val))
+    print(float(val2))
+    print("Center Method: ")
+    print(val3)
+    print("Quad Extrema: ")
+    print(float(result.x))
+    print(float(result2.x))
+    print("Spike Mins (corrected): ")
+    print(float(minVal))
+    print(float(minVal2))
+    print("Correction Val: ")
+    print(float(diff))
+    print("Center (corrected): ")
+    print(mid)
+
     plt.axvline(x=(mid), color='black', linestyle='dashed')
+    plt.axvline(x=(result.x), color='gray', linestyle='dashed')
+
     plt.axvline(x=(minVal), color='black', linestyle='dashed')
     plt.axvline(x=(minVal2), color='black', linestyle='dashed')
     plt.axhline(y=(yVal), color='black', linestyle='dashed')
     plt.axhline(y=(yVal2), color='black', linestyle='dashed')
+    plt.axhline(y=(val), color='red', linestyle='dashed')
+    plt.axhline(y=(val2), color='red', linestyle='dashed')
+    plt.axhline(y=(val3), color='orange', linestyle='dashed')
     plt.axhline(y=(0), color='black')
     plt.scatter(sel[:, 0], sel[:, 1])
 
